@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="./css/simplecss.css">
+    <link rel="stylesheet" href="./css/index.css">
+    <script src="/js/ajax.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div id="login">
+            <div class="title">欢迎来到注册页面</div>
+            <form action="">
+                <div class="content">
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            <label for="username">用户名:</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" id="username">
+                            <div class="input_info" id="input_info"></div>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            <label for="password">密码:</label>
+                        </div>
+                        <div class="col-md-8"><input type="password" id="password"></div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            <label for="repassword">确认密码:</label>
+                        </div>
+                        <div class="col-md-8"><input type="password" id="repassword"></div>
+                    </div>
+                    <div class="row form-group btn-wrap">
+                        <button id="reg" type="button" class="btn btn-danger">注册</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script >
+        var oIpt_username=document.getElementById('username');
+        var oInfo=document.getElementById("input_info");
+        //获得焦点
+        oIpt_username.value ="enter phone number"
+        oIpt_username.onfocus=function () {
+                // oInfo.innerHTML="请使用手机号进行注册";
+            if(oIpt_username.value ==="enter phone number"){
+                oIpt_username.value="";
+            }
+        };
+        //失去焦点
+        var reg_phone=/^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/;
+        oIpt_username.onblur=function () {
+            if(oIpt_username.value === ""){
+                oIpt_username.value="enter phone number";
+                oInfo.innerHTML="";
+            }else{
+                //验证手机格式
+                if(!reg_phone.test(oIpt_username.value)){
+                    oInfo.innerHTML="您输入的不是正确的手机号";
+                }else if(reg_phone.test(oIpt_username.value)){
+                    oInfo.innerHTML="";
+                }
+            }
+        };
+
+    </script>
+    <script>
+        //收集用户输入信息
+        var oUser=getEle('username');
+        var oPass=getEle('password');
+        var oRepass=getEle('repassword');
+        var oBtn=getEle('reg');
+        //发送数据到后台，对用户名和密码进行验证
+        oBtn.onclick=function () {
+            //使用封装的ajax函数
+            ajax({
+                method:'POST',
+                url:'/register',
+                data:'username='+oUser.value+'&password='+oPass.value+'&repassword='+oRepass.value,
+                success:function (result) {
+                    console.log(result);
+                    if(result.status === 0){
+                        //注册成功后跳转到登录页面
+                        window.location.href="/login.html";
+                    }else{
+                        alert(result.message);
+                    }
+                }
+            })
+        };
+        //获取html元素
+        function getEle(id){
+            return document.getElementById(id)
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="./css/simplecss.css">
+    <link rel="stylesheet" href="./css/index.css">
+    <script src="/js/ajax.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div id="login">
+            <div class="title">欢迎来登录页面</div>
+            <form action="">
+                <div class="content">
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            <label for="">用户名:</label>
+                        </div>
+                        <!--输入用户名-->
+                        <div class="col-md-8"><input type="text" id="username"></div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            <label for="">密码:</label>
+                        </div>
+                        <!--输入密码-->
+                        <div class="col-md-8"><input type="password" id="password"></div>
+                    </div>
+                    <div class="row form-group btn-wrap">
+                        <!--登录-->
+                        <button type="button" id="btn" class="btn btn-danger">登录</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        var oUsername=document.getElementById('username');
+        var oPasseord=document.getElementById('password');
+        var oBtn=document.getElementById('btn');
+        oBtn.onclick=function () {
+            ajax({
+                method:'POST',
+                url:'/login',
+                data:'username='+oUsername.value+'&password='+oPasseord.value,
+                success:function (result) {
+                    if(result.status===0){
+                        window.location.href='/admin.html';
+                    }else{
+                        alert(result.message);
+                    }
+                }
+            })
+        }
+    </script>
+</body>
+</html>

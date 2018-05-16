@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="./css/simplecss.css">
+    <link rel="stylesheet" href="./css/admin.css">
+    <script src="./js/ajax.js"></script>
+</head>
+<body>
+<div class="nav">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10">
+                <a href="/admin">后台管理系统</a>
+                <a href="" class="btn btn-success" id="add-btn">添加用户</a>
+            </div>
+            <div class="col-md-2"><a href="/logout">退出系统</a></div>
+        </div>
+    </div>
+</div>
+
+
+<!--表格-->
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered" id="table">
+                <tr>
+                    <th>客户编号</th>
+                    <th>姓名</th>
+                    <th>邮箱</th>
+                    <th>电话</th>
+                    <th>QQ</th>
+                    <th>操作</th>
+                </tr>
+                <!--<tr>-->
+                    <!--<td>1</td>-->
+                    <!--<td>张三</td>-->
+                    <!--<td>1@qq.com</td>-->
+                    <!--<td>135999888899</td>-->
+                    <!--<td>2014868983</td>-->
+                    <!--<td>-->
+                        <!--<button class="btn btn-primary">修改</button>-->
+                        <!--<button class="btn btn-danger">删除</button>-->
+                    <!--</td>-->
+                <!--</tr>-->
+                <!--<tr>-->
+                    <!--<td>1</td>-->
+                    <!--<td>李四</td>-->
+                    <!--<td>1@qq.com</td>-->
+                    <!--<td>135999888899</td>-->
+                    <!--<td>2014868983</td>-->
+                    <!--<td>-->
+                        <!--<button class="btn btn-primary">修改</button>-->
+                        <!--<button class="btn btn-danger">删除</button>-->
+                    <!--</td>-->
+                <!--</tr>-->
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<!--添加用户panel-->
+<div class="panel panel-default" id="adduser">
+    <div class="panel-heading">
+        <div class="panel-title">添加用户</div>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-4">姓名</div>
+            <div class="col-md-8"><input type="text" id="username"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">邮箱</div>
+            <div class="col-md-8"><input type="text" id="email"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">电话</div>
+            <div class="col-md-8"><input type="text" id="phone"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">QQ</div>
+            <div class="col-md-8"><input type="text" id="qq"></div>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <button class="btn btn-primary" id="save-btn">保存</button>
+        <button class="btn btn-primary" id="cancel-btn">取消</button>
+    </div>
+</div>
+
+<!--编辑用户 panel-->
+<div class="panel panel-default" id="editUser">
+    <div class="panel-heading">
+        <div class="panel-title">编辑用户信息</div>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-4">姓名</div>
+            <div class="col-md-8"><input type="text" id="edit-username"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">邮箱</div>
+            <div class="col-md-8"><input type="text" id="edit-email"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">电话</div>
+            <div class="col-md-8"><input type="text" id="edit-phone"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">QQ</div>
+            <div class="col-md-8">
+                <input type="text" id="edit-qq">
+                <!--当后台需要某个数据，但不希望显示出来，可以用hidden-->
+                <input type="hidden" id="edit-id">
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <button class="btn btn-primary" id="edit-save-btn">保存</button>
+        <button class="btn btn-primary" id="edit-cancel-btn">取消</button>
+    </div>
+</div>
+
+<script>
+    var oTable=document.getElementById('table');
+
+    //显示表格
+    ajax({
+        method:'GET',
+        url:'/user',
+        success:function (result) {
+            if(result.status===0){
+                for(var i=0;i<result.message.length;i++){
+                    var oTr=document.createElement('tr');
+                    //result.message[i]是对象，不能用for循环遍历元素，可以用for in
+                    for(var item in result.message[i]){
+                        var oTd=document.createElement('td');
+                        oTd.innerHTML=result.message[i][item];
+                        oTr.appendChild(oTd);
+                    }
+                    //添加操作栏
+                    var oTd_btn=document.createElement('td');
+                    oTd_btn.innerHTML='<button class="btn btn-primary">修改</button>\n'
+                        + '<button class="btn btn-danger">删除</button>';
+                    oTr.appendChild(oTd_btn);
+                    oTable.appendChild(oTr);
+                }
+            }
+        }
+    });
+
+    //添加用户操作
+    var oPanel=document.getElementById('adduser');
+    oPanel.onclick=function (ev) {
+        ev.stopPropagation();
+    };
+    var oBtn_add=document.getElementById('add-btn');
+    var oPanel_Adduser=document.getElementById('adduser');
+    oBtn_add.onclick=function (ev) {
+        //使弹出的添加用户面板，可见，居中；
+        oPanel_Adduser.style.display='block';
+        oPanel_Adduser.style.left = (document.documentElement.clientWidth-oPanel_Adduser.offsetWidth)/2+'px';
+        oPanel_Adduser.style.top=(document.documentElement.clientHeight-oPanel_Adduser.offsetHeight)/2+'px';
+        //发送数据到后台
+        //保存按钮
+        var oBtn_save=document.getElementById('save-btn');
+        oBtn_save.onclick=function () {
+            var oIpt_name=document.getElementById('username');
+            var oIpt_email=document.getElementById('email');
+            var oIpt_phone=document.getElementById('phone');
+            var oIpt_qq=document.getElementById('qq');
+            ajax({
+                method:'post',
+                url:'/adduser',
+                data:'username='+oIpt_name.value+'&email='+oIpt_email.value+'&phone='+oIpt_phone.value+'&qq='+oIpt_qq.value,
+                success:function (result) {
+                    if(result.status===0){
+                        oPanel_Adduser.style.display='none';
+                        alert(result.message);
+                        window.location.reload();
+                    }else{
+                        alert(result.message);
+                    }
+                }
+            });
+        };
+        //取消按钮
+        var oBtn_cancel=document.getElementById('cancel-btn');
+        // var oBody=document.getElementsByTagName("body");
+        oBtn_cancel.addEventListener('click',function () {
+            oPanel_Adduser.style.display='none';
+        });
+        document.addEventListener('click',function () {
+            oPanel_Adduser.style.display='none';
+        });
+        ev.stopPropagation();
+        //因为添加用户按钮是一个a标签，点击后，会指向href地址，
+        // 因为这个地址是空，所以会刷新页面，导致添加用户界面一闪而过，
+        //所以，返回false，阻止其默认属性。
+        return false;
+    };
+
+    //修改用户信息
+    var oEditUser=document.getElementById('editUser');
+    var oEditusername=document.getElementById('edit-username');
+    var oEditemail=document.getElementById('edit-email');
+    var oEditphone=document.getElementById('edit-phone');
+    var oEditqq=document.getElementById('edit-qq');
+    var oEditid=document.getElementById('edit-id');
+    oTable.onclick=function (ev) {
+        ev=ev || event;
+        //判断点击的是修改还是删除
+        if(ev.target.innerHTML === '修改'){
+            //编辑面板居中显示
+            oEditUser.style.display = 'block';
+            oEditUser.style.left=(document.documentElement.clientWidth-oEditUser.offsetWidth)/2 + 'px';
+            oEditUser.style.top=(document.documentElement.clientHeight-oEditUser.offsetHeight)/2 + 'px';
+            //得到点击用户的信息，info是一个数据，里面是一行的信息
+            var info=ev.target.parentNode.parentNode.children;
+            //编辑面板中显示用户信息
+            oEditid.value=info[0].innerHTML;
+            oEditusername.value = info[1].innerHTML;
+            oEditemail.value=info[2].innerHTML;
+            oEditphone.value=info[3].innerHTML;
+            oEditqq.value=info[4].innerHTML;
+            //点击保存按钮将数据发送到后台
+            var oEditsave=document.getElementById('edit-save-btn');
+            var oEditcancel=document.getElementById('edit-cancel-btn');
+            oEditsave.onclick=function () {
+                ajax({
+                    method:'post',
+                    url:'/edituser',
+                    data:'id='+ oEditid.value +'&username='+oEditusername.value+'&email='+oEditemail.value+'&phone='+oEditphone.value+'&qq='+oEditqq.value,
+                    success:function (result) {
+                        if(result.status === 0){
+                            oEditUser.style.display='none';
+                            window.location.reload();
+                            alert(result.message);
+                        }else{
+                            alert(result.message);
+                        }
+                    }
+                })
+            };
+            //取消按钮
+            oEditcancel.onclick=function () {
+                oEditUser.style.display='none';
+            }
+        }else if(ev.target.innerHTML === '删除'){
+            var info=ev.target.parentNode.parentNode.children;
+            oEditid.value=info[0].innerHTML;
+            ajax({
+                method:'post',
+                url:'/delete',
+                data:'id='+oEditid.value,
+                success:function (result) {
+                    if(result.status === 0){
+                        window.location.reload();
+                        alert(result.message);
+                    }else{
+                        alert(result.message);
+                    }
+                }
+            })
+        }
+    }
+
+</script>
+</body>
+</html>
